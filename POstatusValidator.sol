@@ -44,10 +44,18 @@ contract StatusValidator {
 
     }
 
+    mapping(address => bool) allowedWallets;
+
+    constructor() {
+        allowedWallets[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = true; // agregar direccion de wallet permitida
+        allowedWallets[0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2] = true; // agregar direccion de wallet permitida
+        allowedWallets[0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db] = true; // agregar otra direccion de wallet permitida
+    }
+
     // Una función para registrar un nuevo paso en el flujo del proceso.
     function RegisterStep(address userWallet, uint256 POID, string calldata metadata, uint256 poType) public returns (bool success) {
         // Comprueba si la dirección de la wallet del usuario es igual a la del usuario que intenta interactuar
-        require(userWallet == msg.sender, "To be able to interact with your Purchase Order you must use your registered wallet address");
+        require(allowedWallets[userWallet], "To be able to interact with your Purchase Order you must use your registered wallet address");
         // Comprueba que la PO haya sido registrado previamente.
         require(ParameterValidator[POID].length > 0, "This Purchase Order doesn't exist");
         // Comprueba que los tipos orden sean los correctos.
